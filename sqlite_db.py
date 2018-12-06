@@ -11,6 +11,16 @@ def initialize_db():
     )
     """)
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS UserMessageCounts (
+        UserID INTEGER NOT NULL,
+        ChannelID INTEGER NOT NULL,
+        MessageCount INTEGER NOT NULL,
+        TimeStamp INTEGER NOT NULL,
+        PRIMARY KEY (UserID, ChannelID)
+    )
+    """)
+
     conn.commit()
 
 def get_counts_for(userid):
@@ -32,3 +42,8 @@ def do_count(userid):
 def give_count(userid, count):
     """Give the user the specified count."""
     c.execute("UPDATE OR IGNORE UserCounts SET UserID = ? WHERE Count = ?;", (userid, count))
+
+def add_messages(userid, channelid, time, message_count):
+    """Add the amount of messages for a user in a channel."""
+    c.execute("INSERT INTO UserMessageCounts (UserID, ChannelID, MessageCount, TimeStamp) VALUES (?,?,?,?);",
+              (userid, channelid, message_count, int(time.timestamp())))

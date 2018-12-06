@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 conn = sqlite3.connect("sqlite.db")
 c = conn.cursor()
 
@@ -16,7 +17,7 @@ def initialize_db():
         UserID INTEGER NOT NULL,
         ChannelID INTEGER NOT NULL,
         MessageCount INTEGER NOT NULL,
-        TimeStamp INTEGER NOT NULL,
+        TimeStamp REAL NOT NULL,
         PRIMARY KEY (UserID, ChannelID)
     )
     """)
@@ -45,5 +46,15 @@ def give_count(userid, count):
 
 def add_messages(userid, channelid, time, message_count):
     """Add the amount of messages for a user in a channel."""
-    c.execute("INSERT INTO UserMessageCounts (UserID, ChannelID, MessageCount, TimeStamp) VALUES (?,?,?,?);",
-              (userid, channelid, message_count, int(time.timestamp())))
+    c.execute("INSERT OR REPLACE INTO UserMessageCounts (UserID, ChannelID, MessageCount, TimeStamp) VALUES (?,?,?,?);",
+              (userid, channelid, message_count, time.timestamp()))
+    conn.commit()
+
+def get_message_counts(userid, channelid):
+    """Get the timestamp for the message count for user in channel."""
+    res = c.execute("SELECT TimeStamp, MessageCount FROM UserMessageCounts WHERE UserID = ? AND ChannelID = ?;",
+                      (userid, channelid)).fetchone()
+    if (res is None):
+        return (0, None)
+    else:
+        return (res[1], datetime.datetime.fromtimestamp(res[0]))

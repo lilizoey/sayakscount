@@ -37,12 +37,13 @@ async def give(ctx, user: discord.Member, count):
         await ctx.send(f"Gave {count} to {user.name}!")
 
 @bot.command()
-async def fetch_all_clean(ctx):
+async def fetch(ctx):
     """
     Go through every message in the channel and count the messages from the author.
     Then add that to the database.
     """
-    counter = len([msg async for msg in ctx.channel.history(limit=None) if msg.author == ctx.message.author])
+    (counts, time) = database.get_message_counts(ctx.message.author.id, ctx.message.channel.id)
+    counter = counts + len([msg async for msg in ctx.channel.history(limit=None, after=time) if msg.author == ctx.message.author])
     database.add_messages(ctx.message.author.id, ctx.message.channel.id, ctx.message.created_at, counter)
     await ctx.send(counter)
 

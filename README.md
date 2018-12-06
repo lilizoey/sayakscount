@@ -6,5 +6,5 @@ and then do:
 ```
 pipenv install
 pipenv shell
-python bot.py
+python start.py
 ```

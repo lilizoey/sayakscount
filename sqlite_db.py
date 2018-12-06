@@ -34,6 +34,9 @@ def get_who_counted(count):
 
 def do_count(userid):
     """Count once for user with userid."""
+    conn = sqlite3.connect("sqlite.db")
+    c = conn.cursor()
+
     c.execute("INSERT INTO UserCounts (UserID) VALUES (?);", (userid,))
     conn.commit()
     count = c.execute("SELECT last_insert_rowid();").fetchone()[0]
@@ -42,10 +45,17 @@ def do_count(userid):
 
 def give_count(userid, count):
     """Give the user the specified count."""
+    conn = sqlite3.connect("sqlite.db")
+    c = conn.cursor()
+
     c.execute("UPDATE OR IGNORE UserCounts SET UserID = ? WHERE Count = ?;", (userid, count))
+    conn.commit()
 
 def add_messages(userid, channelid, time, message_count):
     """Add the amount of messages for a user in a channel."""
+    conn = sqlite3.connect("sqlite.db")
+    c = conn.cursor()
+
     c.execute("INSERT OR REPLACE INTO UserMessageCounts (UserID, ChannelID, MessageCount, TimeStamp) VALUES (?,?,?,?);",
               (userid, channelid, message_count, time.timestamp()))
     conn.commit()
@@ -67,7 +77,3 @@ def get_top_counts():
     GROUP BY UserID 
     ORDER BY COUNT(Count) DESC 
     LIMIT 10;""").fetchall()
-
-def get_total_counts():
-    """Gets the total amount of counts."""
-    return c.execute("")

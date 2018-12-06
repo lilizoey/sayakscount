@@ -47,6 +47,12 @@ async def fetch(ctx):
     database.add_messages(ctx.message.author.id, ctx.message.channel.id, ctx.message.created_at, counter)
     await ctx.send(counter)
 
+@bot.command()
+async def lb(ctx):
+    """Display the global leaderboards for who has the most counts."""
+    tops = [((await bot.get_user_info(uid)).name, count, percentage) for (count, uid, percentage) in database.get_top_counts()]
+    await ctx.send(tops)
+
 if __name__ == "__main__":
     json_data = open("parameters.json")
     parameters = json.load(json_data)

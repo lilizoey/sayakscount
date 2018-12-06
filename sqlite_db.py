@@ -58,3 +58,16 @@ def get_message_counts(userid, channelid):
         return (0, None)
     else:
         return (res[1], datetime.datetime.fromtimestamp(res[0]))
+
+def get_top_counts():
+    """Get the userids for the top counts and the number of counts they have."""
+    return c.execute("""
+    SELECT COUNT(Count), UserID, 1.0 * COUNT(Count) / (SELECT COUNT(*) FROM UserCounts) AS percentage 
+    FROM UserCounts 
+    GROUP BY UserID 
+    ORDER BY COUNT(Count) DESC 
+    LIMIT 10;""").fetchall()
+
+def get_total_counts():
+    """Gets the total amount of counts."""
+    return c.execute("")

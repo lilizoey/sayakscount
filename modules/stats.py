@@ -36,6 +36,6 @@ async def stats(ctx):
 **Creation Date**: {bot.user.created_at}
 **Join Date**: {ctx.message.guild.me.joined_at}
 **Uptime**: {datetime.now() - startup}
-**Memory Usage**: {str(round(float(psutil.Process(os.getpid()).memory_info().rss)/1048576, 1))+'MB'}
+**Memory Usage**: {round(psutil.Process(os.getpid()).memory_info().rss / 1048576, 1)}MB
 """)
 

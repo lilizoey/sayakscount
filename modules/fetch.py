@@ -1,3 +1,4 @@
+import discord
 from bot import bot, database
 
 async def fetch_channel(channel, timestamp):

@@ -99,3 +99,14 @@ def get_top_counts():
     GROUP BY UserID 
     ORDER BY COUNT(Count) DESC 
     LIMIT 10;""").fetchall()
+
+def get_entries():
+    """Get all entries in the database."""
+    return c.execute("""
+    SELECT SUM(count) FROM
+    (SELECT COUNT(*) AS count FROM UserCounts
+    UNION ALL
+    SELECT COUNT(*) AS count FROM ChannelCounts
+    UNION ALL
+    SELECT COUNT(*) AS count FROM UserMessageCounts);
+    """).fetchone()[0]

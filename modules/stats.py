@@ -9,4 +9,18 @@ async def invite(ctx):
 
 @bot.command()
 async def stats(ctx):
-    await ctx.send(await bot.application_info())
+    app_info = await bot.application_info()
+
+    username = f"{bot.user.name}#{bot.user.discriminator}"
+    owner = f"{app_info.owner.name}#{app_info.owner.discriminator}"
+    servers = len(bot.guilds)
+
+    await ctx.send(f"""
+**Username**: {username}
+**Owner**: {owner}
+**Servers**: {servers}
+**ID**: {app_info.id}
+**Library**: Discord.py rewrite
+**Database Entries**: {database.get_entries()}
+""")
+

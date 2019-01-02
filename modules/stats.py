@@ -15,6 +15,9 @@ async def invite(ctx):
 
 @bot.command()
 async def stats(ctx):
+    """
+    Give some stats about the bot.
+    """
     app_info = await bot.application_info()
 
     username = f"{bot.user.name}#{bot.user.discriminator}"
@@ -39,3 +42,28 @@ async def stats(ctx):
 **Memory Usage**: {round(psutil.Process(os.getpid()).memory_info().rss / 1048576, 1)}MB
 """)
 
+@bot.command()
+async def sinfo(ctx):
+    server = ctx.message.guild
+    owner = await bot.get_user_info(server.owner_id)
+    owner_name = f"{owner.name}#{owner.discriminator}"
+    voice_channels = [channel for channel in server.channels if isinstance(channel, discord.VoiceChannel)]
+    text_channels = [channel for channel in server.channels if isinstance(channel, discord.TextChannel)]
+    category_channels = [channel for channel in server.channels if isinstance(channel, discord.CategoryChannel)]
+
+    msg = await ctx.send(f"""
+**{server.name}**: {server.id}
+**Owner**: {owner_name}
+**Region**: {str(server.region)}
+**Channels**: {len(voice_channels)} voice channels, {len(text_channels)} text channels, {len(category_channels)} categories
+**Members**: {server.member_count}
+**Default Channel**: {server.system_channel.name if server.system_channel is not None else None}
+**AFK Channel**: {server.afk_channel.name if server.afk_channel is not None else None}
+**AFK Timeout**: {server.afk_timeout}
+**Created On**: {server.created_at}
+**Verification Requirement**: {str(server.verification_level)}
+**Roles**: {", ".join([str(role).replace("@", "@​") for role in server.roles])}
+**Emoji**:
+""")
+    for emoji in server.emojis:
+        await msg.add_reaction(emoji) 

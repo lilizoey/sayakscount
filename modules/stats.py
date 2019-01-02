@@ -1,6 +1,8 @@
 import os
 import psutil
 import discord
+import typing
+
 from datetime import datetime
 from bot import bot, database
 
@@ -67,3 +69,23 @@ async def sinfo(ctx):
 """)
     for emoji in server.emojis:
         await msg.add_reaction(emoji) 
+
+@bot.command()
+async def uinfo(ctx, user: typing.Optional[discord.Member] = None):
+    if (user is None):
+        user = ctx.message.author 
+    
+    await ctx.send(f"""
+**Username:** {user.name}#{user.discriminator}
+**Nick:** {user.nick}
+**Status:** {user.status}
+**Top Role:** {user.top_role}
+**Role Color:** {user.color}
+**Joined Server At:** {user.joined_at}
+**Account Created At:** {user.created_at}
+**User ID:** {user.id}
+**User Hash:** {hash(user)}
+**Avatar:** {user.avatar_url}
+**Roles:** 
+{",".join([str(role) for role in user.roles])}
+""")

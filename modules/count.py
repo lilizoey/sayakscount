@@ -1,4 +1,7 @@
 import discord
+import sched 
+import time
+
 from bot import bot, database
 
 @bot.command()
@@ -26,6 +29,13 @@ async def give(ctx, user: discord.Member, count):
     else:
         database.give_count(user.id, count)
         await ctx.send(f"Gave {count} to {user.name}!")
+
+@bot.command()
+async def accept(ctx, num: int):
+    pass
+
+def cancel_give(userid, count):
+    pass
 
 @bot.command()
 async def lb(ctx):

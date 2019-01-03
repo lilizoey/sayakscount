@@ -21,8 +21,10 @@ async def fetch(ctx):
     Go through every message in the channel and count the messages from the author.
     Then add that to the database.
     """
-    counter = await fetch_channel_user(ctx.channel, ctx.message.author.id, ctx.message.created_at)
-    await ctx.send(counter)
+    async with ctx.channel.typing():
+        counter_user = await fetch_channel_user(ctx.channel, ctx.message.author.id, ctx.message.created_at)
+        counter_channel = await fetch_channel(ctx.channel, ctx.message.created_at)
+        await ctx.send(f"You have {counter_user} messages in this channel, making up {round(counter_user * 100.0 / counter_channel, 2)}% of the messages!")
 
 async def newChannelInfo(channel, timestamp, userid):
     self = ChannelInfo()

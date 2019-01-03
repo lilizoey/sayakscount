@@ -34,6 +34,16 @@ def initialize_db():
     )
     """)
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS GiveTags (
+        Giver INTEGER NOT NULL,
+        Count INTEGER NOT NULL,
+        Recipient INTEGER NOT NULL,
+        PRIMARY KEY(Count),
+        FOREIGN KEY (Giver, Count) REFERENCES UserCounts (UserID, Count)
+    )
+    """)
+
     conn.commit()
 
 def get_counts_for(userid):
@@ -110,3 +120,6 @@ def get_entries():
     UNION ALL
     SELECT COUNT(*) AS count FROM UserMessageCounts);
     """).fetchone()[0]
+
+def tag_give(count, recipient_id):
+    """Tag a count to give to someone else."""

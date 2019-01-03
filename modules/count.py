@@ -1,5 +1,5 @@
 import discord
-import sched 
+import asyncio 
 import time
 
 from bot import bot, database
@@ -22,13 +22,16 @@ async def count(ctx):
     await ctx.send(count)
 
 @bot.command()
-async def give(ctx, user: discord.Member, count):
+async def give(ctx, user: discord.Member, count: int):
     """Give user the specified count if it's owned by the user that used the message."""
     if (database.get_who_counted(count) != ctx.message.author.id):
         await ctx.send("That is not your count.")
-    else:
-        database.give_count(user.id, count)
-        await ctx.send(f"Gave {count} to {user.name}!")
+        return
+    
+    database.tag_give(count, user.id)
+    await ctx.send(f"{user.name}, {ctx.message.author.name} wants to give you {count}. Do you accept? type `{bot.command_prefix}accept {count}`")
+    await asyncio.sleep(3000)
+    database.untag(ctx.message.author.id, count)
 
 @bot.command()
 async def accept(ctx, num: int):

@@ -39,7 +39,9 @@ def initialize_db():
         Giver INTEGER NOT NULL,
         Count INTEGER NOT NULL,
         Recipient INTEGER NOT NULL,
+        Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY(Count),
+        UNIQUE(Giver, Count, Recipient)
         FOREIGN KEY (Giver, Count) REFERENCES UserCounts (UserID, Count)
     )
     """)
@@ -123,3 +125,32 @@ def get_entries():
 
 def tag_give(count, recipient_id):
     """Tag a count to give to someone else."""
+    c.execute("""
+    INSERT OR IGNORE INTO GiveTags (Giver, Count, Recipient)
+    SELECT UserID, :count , :recipient 
+    FROM UserCounts 
+    WHERE Count = :count;
+    """, {"count": count, "recipient": recipient_id})
+    conn.commit()
+
+def check_tagged(count):
+    """
+    Check if the count is tagged to give away.
+    Return None if it's not, or a tuple (giver, recipient) if it is.
+    """
+    return c.execute("""
+    SELECT Giver, Recipient
+    FROM GiveTags
+    WHERE Count = ?;
+    """, count).fetchone()
+
+def untag(giver, count):
+    """
+    Untag the count for giving iff the giver is still the same.
+    """
+    c.execute("""
+    DELETE 
+    FROM GiveTags
+    WHERE Giver = ? AND Count = ?;
+    """, (giver, count))
+    conn.commit()

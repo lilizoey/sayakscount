@@ -133,21 +133,22 @@ def tag_give(count, recipient_id):
     """, {"count": count, "recipient": recipient_id})
     conn.commit()
 
-def check_tagged(count):
+def check_tagged(count, recipient):
     """
-    Check if the count is tagged to give away.
+    Check if the count is tagged to give away to recipient.
     Return None if it's not, or a tuple (giver, recipient) if it is.
     """
     return c.execute("""
     SELECT Giver, Recipient
     FROM GiveTags
-    WHERE Count = ?;
-    """, count).fetchone()
+    WHERE Count = ? AND Recipient = ?;
+    """, (count, recipient)).fetchone()
 
 def untag(giver, count):
     """
     Untag the count for giving iff the giver is still the same.
     """
+    print(f"{giver} untagged {count}")
     c.execute("""
     DELETE 
     FROM GiveTags

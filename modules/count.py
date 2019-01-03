@@ -1,19 +1,20 @@
 import discord
 import asyncio 
 import time
+import typing
 
 from bot import bot, database
 
 @bot.command()
-async def get(ctx, *args):
+async def get(ctx, count: typing.Optional[int] = None):
     """Get all the counts for a user, or get the user for a specific count."""
-    if (len(args) == 0):
+    if (count):
         counts = database.get_counts_for(ctx.message.author.id)
         await ctx.send([count[0] for count in counts])
     else:
-        uid = database.get_who_counted(int(args[0]))
+        uid = database.get_who_counted(count)
         user = await bot.get_user_info(uid)
-        await ctx.send(user.name) 
+        await ctx.send(user.name)
 
 @bot.command()
 async def count(ctx):
@@ -30,12 +31,17 @@ async def give(ctx, user: discord.Member, count: int):
     
     database.tag_give(count, user.id)
     await ctx.send(f"{user.name}, {ctx.message.author.name} wants to give you {count}. Do you accept? type `{bot.command_prefix}accept {count}`")
-    await asyncio.sleep(3000)
+    await asyncio.sleep(300)
     database.untag(ctx.message.author.id, count)
 
 @bot.command()
 async def accept(ctx, num: int):
-    pass
+    if (not database.check_tagged(num, ctx.message.author.id)):
+        await ctx.send("Noone wants to give that to you.")
+        return
+
+    database.give_count(ctx.message.author.id, num)
+    await ctx.send(f"You just got {num}!")
 
 def cancel_give(userid, count):
     pass

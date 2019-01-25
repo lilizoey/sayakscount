@@ -2,19 +2,29 @@ import discord
 import asyncio 
 import time
 import typing
+import discord
+
+import modules.helpers as h
 
 from bot import bot, database
 
 @bot.command()
 async def get(ctx, count: typing.Optional[int] = None):
     """Get all the counts for a user, or get the user for a specific count."""
-    if (count):
-        counts = database.get_counts_for(ctx.message.author.id)
-        await ctx.send([count[0] for count in counts])
+    if (count is None):
+        counts = [str(count[0]) for count in database.get_counts_for(ctx.message.author.id)]
+        await h.respond(ctx,
+            footer_text=f"that's {len(counts)} total counts.",
+            title=f"These are your counts:",
+            description=" ".join(counts)
+        )
     else:
         uid = database.get_who_counted(count)
         user = await bot.get_user_info(uid)
-        await ctx.send(user.name)
+        await h.respond(ctx,
+            title=f"{count} has been claimed by:",
+            description=f"{user.name}"
+        )
 
 @bot.command()
 async def count(ctx):

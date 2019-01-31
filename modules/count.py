@@ -65,7 +65,6 @@ async def lb(ctx):
     """Display the global leaderboards for who has the most counts."""
     tops = [((await bot.get_user_info(uid)).name, str(count), str(round(frac * 100, 2))) for (count, uid, frac) in database.get_top_counts()]
     (name, count, percentage) = zip(*tops)
-    print
     await h.respond(ctx, title="Here are the top counters",
         fields=[
             ("Name", "\n".join([f"**{name}**" for name in name]), True),

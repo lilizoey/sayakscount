@@ -1,6 +1,8 @@
 import discord
 from bot import bot, database
 
+import modules.helpers as h
+
 async def fetch_channel(channel, timestamp):
     (counts, time) = database.get_channel_counts(channel.id)
     counter = counts + len([msg async for msg in channel.history(limit=None, after=time)])
@@ -24,7 +26,7 @@ async def fetch(ctx):
     async with ctx.channel.typing():
         counter_user = await fetch_channel_user(ctx.channel, ctx.message.author.id, ctx.message.created_at)
         counter_channel = await fetch_channel(ctx.channel, ctx.message.created_at)
-        await ctx.send(f"You have {counter_user} messages in this channel, making up {round(counter_user * 100.0 / counter_channel, 2)}% of the messages!")
+        await h.respond(ctx, description=f"You have **{counter_user}** messages in this channel, making up **{round(counter_user * 100.0 / counter_channel, 2)}%** of the messages!")
 
 async def newChannelInfo(channel, timestamp, userid):
     self = ChannelInfo()

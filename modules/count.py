@@ -56,8 +56,18 @@ async def accept(ctx, num: int):
 def cancel_give(userid, count):
     pass
 
+def pretty_user_in_board(name, count, frac):
+    percent = round(frac * 100, 2)
+    return f"**{name}**: {count} {percent}%"
+
 @bot.command()
 async def lb(ctx):
     """Display the global leaderboards for who has the most counts."""
-    tops = [((await bot.get_user_info(uid)).name, count, percentage) for (count, uid, percentage) in database.get_top_counts()]
-    await ctx.send(tops)
+    tops = [((await bot.get_user_info(uid)).name, str(count), str(round(frac * 100, 2))) for (count, uid, frac) in database.get_top_counts()]
+    (name, count, percentage) = zip(*tops)
+    print
+    await h.respond(ctx, title="Here are the top counters",
+        fields=[
+            ("Name", "\n".join([f"**{name}**" for name in name]), True),
+            ("Counts", "\n".join(count), True),
+            ("Percent", "\n".join([f"{percentage}%" for percentage in percentage]), True)])

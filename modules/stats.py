@@ -6,6 +6,8 @@ import typing
 from datetime import datetime
 from bot import bot, database
 
+import modules.helpers as h
+
 startup = datetime.now()
 
 INVITE = "https://discordapp.com/oauth2/authorize?client_id={}&scope=bot&permissions=117760"
@@ -29,7 +31,7 @@ async def stats(ctx):
     users = sum([server.member_count for server in servers])
 
 
-    await ctx.send(f"""
+    await h.respond(ctx, description=f"""
 **Username**: {username}
 **Owner**: {owner}
 **Servers**: {len(servers)}
@@ -53,7 +55,7 @@ async def sinfo(ctx):
     text_channels = [channel for channel in server.channels if isinstance(channel, discord.TextChannel)]
     category_channels = [channel for channel in server.channels if isinstance(channel, discord.CategoryChannel)]
 
-    msg = await ctx.send(f"""
+    msg = await h.respond(ctx, description=f"""
 **{server.name}**: {server.id}
 **Owner**: {owner_name}
 **Region**: {str(server.region)}
@@ -75,7 +77,7 @@ async def uinfo(ctx, user: typing.Optional[discord.Member] = None):
     if (user is None):
         user = ctx.message.author 
     
-    await ctx.send(f"""
+    await h.respond(ctx, description=f"""
 **Username:** {user.name}#{user.discriminator}
 **Nick:** {user.nick}
 **Status:** {user.status}

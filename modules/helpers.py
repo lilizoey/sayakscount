@@ -8,4 +8,4 @@ async def respond(ctx, footer_text=discord.Embed.Empty, fields=[], **kwargs):
     embed.set_footer(text=footer_text)
     for (name, value, inline) in fields:
         embed.add_field(name=name, value=value, inline=inline)
-    await ctx.send(embed=embed)
+    return await ctx.send(embed=embed)

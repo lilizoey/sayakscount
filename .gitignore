@@ -4,3 +4,5 @@ parameters.json
 
 .vscode/
 sqlite.db
+
+__pycache__/

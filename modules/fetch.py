@@ -43,6 +43,9 @@ class ChannelInfo:
     def __str__(self):
         return f"**{self.channel.name}**: total: {self.channel_count}, total for {self.username}: {self.user_count}"
 
+    def tuple(self):
+        return (self.channel.name, self.channel_count, self.username, self.user_count)
+
 async def get_top(ctx):
     channels = ctx.message.guild.channels
     timestamp = ctx.message.created_at
@@ -57,4 +60,9 @@ async def get_top(ctx):
 @bot.command()
 async def top(ctx):
     res = await get_top(ctx)
-    await ctx.send([str(chan) for chan in res])
+    (channel_name, channel_count, username, user_count) = zip(*[chan.tuple() for chan in res])
+    await h.respond(ctx, fields=[
+        ("Channel", "\n".join([f"**{name}**" for name in channel_name]), True),
+        ("Counts", "\n".join([str(count) for count in channel_count]), True),
+        (f"Counts for {username[0]}", "\n".join([str(count) for count in user_count]), True)
+    ])

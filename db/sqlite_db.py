@@ -54,7 +54,11 @@ def get_counts_for(userid):
 
 def get_who_counted(count):
     """Gets the userid for the given count."""
-    return c.execute("SELECT UserID FROM UserCounts WHERE Count = ?;", (count,)).fetchone()[0]
+    temp = c.execute("SELECT UserID FROM UserCounts WHERE Count = ?;", (count,)).fetchone()
+    if temp is None:
+        return None
+    
+    return temp[0]
 
 def do_count(userid):
     """Count once for user with userid."""
